@@ -548,10 +548,34 @@
         }
     }
 
-    function submitForm() {
-        alert('回答を送信しました！');
-    }
-</script>
+function submitForm() {
+    var submitBtn = document.querySelector('button[onclick="submitForm()"]');
+    if (submitBtn) submitBtn.disabled = true;
 
-</body>
-</html>
+    var userName = document.getElementById('userName') ? document.getElementById('userName').value : '';
+    var datetime = document.getElementById('currentDateTime') ? document.getElementById('currentDateTime').innerText : '';
+    var details = document.getElementById('summaryDetails') ? document.getElementById('summaryDetails').innerText : '';
+
+    var payload = {
+        userName: userName,
+        datetime: datetime,
+        details: details
+    };
+
+    fetch('https://script.google.com/macros/s/AKfycbz4sIzDc9BfkZU2p5WOTKWZwsbGmTK9dk4E-m54AbqIXkjt_0OqbyH4dJTUrMaLK8J1_g/exec', {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(payload)
+    })
+    .then(function() {
+        alert('回答を送信しました！');
+        location.reload();
+    })
+    .catch(function(err) {
+        alert('送信エラーが発生しました: ' + err);
+        if (submitBtn) submitBtn.disabled = false;
+    });
+}
