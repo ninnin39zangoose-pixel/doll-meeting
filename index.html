@@ -547,7 +547,6 @@
             showSection(1);
         }
     }
-
 function submitForm() {
     var submitBtn = document.querySelector('button[onclick="submitForm()"]');
     if (submitBtn) submitBtn.disabled = true;
@@ -556,19 +555,15 @@ function submitForm() {
     var datetime = document.getElementById('sum_datetime') ? document.getElementById('sum_datetime').innerText : '';
     var details = document.getElementById('sum_details') ? document.getElementById('sum_details').innerText : '';
 
-    var payload = {
-        userName: userName,
-        datetime: datetime,
-        details: details
-    };
+    // 送信データをフォーム形式に変換
+    var formData = new URLSearchParams();
+    formData.append('userName', userName);
+    formData.append('datetime', datetime);
+    formData.append('details', details);
 
     fetch('https://script.google.com/macros/s/AKfycbz4sIzDc9BfkZU2p5WOTKWZwsbGmTK9dk4E-m54AbqIXkjt_0OqbyH4dJTUrMaLK8J1_g/exec', {
         method: 'POST',
-        mode: 'no-cors',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(payload)
+        body: formData
     })
     .then(function() {
         alert('回答を送信しました！');
