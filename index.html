@@ -71,7 +71,7 @@
 
             <div class="btn-group">
                 <div></div>
-                <button type="button" onclick="nextSec(1)" class="btn">次へ進む</button>
+                <button type="button" onclick="nextSection(1)" class="btn">次へ進む</button>
             </div>
         </div>
 
@@ -99,7 +99,7 @@
 
             <div class="btn-group">
                 <button type="button" onclick="backSec(2)" class="btn btn-back">戻る</button>
-                <button type="button" onclick="nextSec(2)" class="btn">次へ進む</button>
+                <button type="button" onclick="nextSection(2)" class="btn">次へ進む</button>
             </div>
         </div>
 
@@ -129,7 +129,7 @@
 
             <div class="btn-group">
                 <button type="button" onclick="backSec(3)" class="btn btn-back">戻る</button>
-                <button type="button" onclick="nextSec(3)" class="btn">次へ進む</button>
+                <button type="button" onclick="nextSection(3)" class="btn">次へ進む</button>
             </div>
         </div>
 
@@ -192,7 +192,7 @@
 
             <div class="btn-group">
                 <button type="button" onclick="backSec(4)" class="btn btn-back">戻る</button>
-                <button type="button" onclick="nextSec(4)" class="btn">次へ進む</button>
+                <button type="button" onclick="nextSection(4)" class="btn">次へ進む</button>
             </div>
         </div>
 
@@ -263,7 +263,7 @@
 
             <div class="btn-group">
                 <button type="button" onclick="backSec(5)" class="btn btn-back">戻る</button>
-                <button type="button" onclick="nextSec(5)" class="btn">次へ進む</button>
+                <button type="button" onclick="nextSection(5)" class="btn">次へ進む</button>
             </div>
         </div>
 
@@ -283,7 +283,7 @@
 
             <div class="btn-group">
                 <button type="button" onclick="backSec(6)" class="btn btn-back">戻る</button>
-                <button type="button" onclick="nextSec(6)" class="btn">次へ進む</button>
+                <button type="button" onclick="nextSection(6)" class="btn">次へ進む</button>
             </div>
         </div>
 
@@ -405,7 +405,7 @@
         document.getElementById('sum_details').innerText = details.join(' / ');
     }
 
-    function nextSec(secNum) {
+    function nextSection(secNum) {
         if (secNum === 1) {
             if (!document.getElementById('userName').value.trim()) {
                 triggerResetWithError("お名前が入力されていません。");
