@@ -404,7 +404,10 @@
 
         document.getElementById('sum_details').innerText = details.join(' / ');
     }
-
+function isChecked(name) {
+    var selector = 'input[name="' + name + '"]:checked, input[name="' + name + '[]"]:checked';
+    return document.querySelectorAll(selector).length > 0;
+}
 function nextSection(secNum) {
     if (secNum === 1) {
         var nameInput = document.getElementById('userName') || document.querySelector('#sec_1 input[type="text"]');
