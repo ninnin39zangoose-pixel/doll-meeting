@@ -405,138 +405,55 @@
         document.getElementById('sum_details').innerText = details.join(' / ');
     }
 
-    function nextSection(secNum) {
-        if (secNum === 1) {
-            if (!document.getElementById('userName').value.trim()) {
-                triggerResetWithError("お名前が入力されていません。");
-                return;
-            }
-            if (!isChecked('doll_type')) {
-                triggerResetWithError("持参するドールの種類が1つも選択されていません。");
-                return;
-            }
-            historyStack.push(1);
-            showSection(2);
+function nextSection(secNum) {
+    if (secNum === 1) {
+        if (!document.getElementById('userName').value.trim()) {
+            triggerResetWithError("お名前が入力されていません。");
             return;
         }
-
-        if (secNum === 2) {
-            var choice = getRadioText('branch_choice');
-            if (!choice) {
-                triggerResetWithError("ドール種別の分岐選択肢が選ばれていません。");
-                return;
-            }
-            historyStack.push(2);
-            if (isTypeSelected('80cm') || choice === 'sec_other') {
-                showSection(3);
-            } else {
-                showSection(4);
-            }
+        if (!isChecked('doll_type')) {
+            triggerResetWithError("持参するドールの種類が1つも選択されていません。");
             return;
         }
-
-        if (secNum === 3) {
-            var heightVal = document.getElementById('height_80').value;
-            if (!heightVal || isNaN(parseFloat(heightVal)) || parseFloat(heightVal) < 80) {
-                triggerResetWithError("80cm以上のドールの身長が正しく入力されていません（80以上の数値が必要）。");
-                return;
-            }
-            if (!getRadioText('stand_80')) {
-                triggerResetWithError("80cm以上ドールのスタンド有無を選択してください。");
-                return;
-            }
-            historyStack.push(3);
-            if (isTypeSelected('1/3') || isTypeSelected('1/4') || isTypeSelected('1/6')) {
-                showSection(4);
-            } else if (isTypeSelected('mini')) {
-                showSection(6);
-            } else {
-                prepareSummary();
-                showSection(7);
-            }
+        historyStack.push(1);
+        showSection(2);
+        return;
+    }
+    if (secNum === 2) {
+        var choice = getRadioText('branch_choice');
+        if (!choice) {
+            triggerResetWithError("ドール種別の分岐選択肢が選ばれていません。");
             return;
         }
-
-        if (secNum === 4) {
-            var c1_3 = getGridCount('grid_1_3');
-            var c1_4 = getGridCount('grid_1_4');
-            var c1_6 = getGridCount('grid_1_6');
-            var cNui = getGridCount('grid_nui');
-            var scaleTotal = c1_3 + c1_4 + c1_6 + cNui;
-            var has80 = get80cmDollCount() > 0;
-
-            if (has80 && scaleTotal > 3) {
-                triggerResetWithError("80cm以上（等身大）を含める場合、スケールドールの合計は最大3体までです。（現在: スケール" + scaleTotal + "体 + 等身大1体 = 計" + (scaleTotal + 1) + "体）");
-                return;
-            }
-            if (!has80 && scaleTotal > 4) {
-                triggerResetWithError("スケールドールの合計は最大4体までです。（現在: " + scaleTotal + "体）");
-                return;
-            }
-
-            if (isTypeSelected('1/3') && c1_3 === 0) {
-                triggerResetWithError("最初の質問で『1/3サイズ』を選択していますが、数量が0体になっています。");
-                return;
-            }
-            if (!isTypeSelected('1/3') && c1_3 > 0) {
-                triggerResetWithError("最初の質問で『1/3サイズ』を選択していませんが、1体以上が指定されています。");
-                return;
-            }
-
-            if (isTypeSelected('1/4') && c1_4 === 0) {
-                triggerResetWithError("最初の質問で『1/4サイズ』を選択していますが、数量が0体になっています。");
-                return;
-            }
-            if (!isTypeSelected('1/4') && c1_4 > 0) {
-                triggerResetWithError("最初の質問で『1/4サイズ』を選択していませんが、1体以上が指定されています。");
-                return;
-            }
-
-            if (isTypeSelected('1/6') && (c1_6 === 0 && cNui === 0)) {
-                triggerResetWithError("最初の質問で『1/6サイズ・ぬいぐるみ』を選択していますが、数量が指定されていません。");
-                return;
-            }
-
-            historyStack.push(4);
-            prepareSection5();
-            showSection(5);
+        historyStack.push(2);
+        if (isTypeSelected('80cm') || choice === 'sec_other') {
+            showSection(3);
+        } else {
+            showSection(4);
+        }
+        return;
+    }
+    if (secNum === 3) {
+        var heightVal = document.getElementById('height_80').value;
+        if (!heightVal || isNaN(parseFloat(heightVal)) || parseFloat(heightVal) < 80) {
+            triggerResetWithError("80cm以上のドールの身長が正しく入力されていません（80以上の数値が必要）。");
             return;
         }
-
-        if (secNum === 5) {
-            if (getGridCount('grid_1_3') > 0 && !getRadioText('stand_1_3')) {
-                triggerResetWithError("1/3サイズのスタンド有無が選択されていません。");
-                return;
-            }
-            if (getGridCount('grid_1_4') > 0 && !getRadioText('stand_1_4')) {
-                triggerResetWithError("1/4サイズのスタンド有無が選択されていません。");
-                return;
-            }
-            if (getGridCount('grid_1_6') > 0 && !getRadioText('stand_1_6')) {
-                triggerResetWithError("1/6サイズのスタンド有無が選択されていません。");
-                return;
-            }
-
-            historyStack.push(5);
-            if (isTypeSelected('mini')) {
-                showSection(6);
-            } else {
-                prepareSummary();
-                showSection(7);
-            }
+        if (!getRadioText('stand_80')) {
+            triggerResetWithError("80cm以上ドールのスタンド有無を選択してください。");
             return;
         }
-
-        if (secNum === 6) {
-            if (!getRadioText('count_mini')) {
-                triggerResetWithError("ミニサイズドールの持込数が選択されていません。");
-                return;
-            }
-            historyStack.push(6);
+        historyStack.push(3);
+        if (isTypeSelected('1/3') || isTypeSelected('1/4') || isTypeSelected('1/6')) {
+            showSection(4);
+        } else if (isTypeSelected('mini')) {
+            showSection(6);
+        } else {
             prepareSummary();
             showSection(7);
-            return;
         }
+        return;
+    }
 
     function backSec(secNum) {
         if (historyStack.length > 0) {
