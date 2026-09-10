@@ -405,7 +405,7 @@
         document.getElementById('sum_details').innerText = details.join(' / ');
     }
 
-　function nextSection(secNum) {
+function nextSection(secNum) {
     if (secNum === 1) {
         var nameInput = document.getElementById('userName') || document.querySelector('#sec_1 input[type="text"]');
         var nameVal = nameInput ? nameInput.value.trim() : '';
@@ -422,7 +422,7 @@
         showSection(2);
         return;
     }
-    　　if (secNum === 2) {
+    if (secNum === 2) {
         var choice = getRadioText('branch_choice');
         if (!choice) {
             triggerResetWithError("ドール種別の分岐選択肢が選ばれていません。");
@@ -453,9 +453,10 @@
             showSection(6);
         } else {
             prepareSummary();
-　　　　　　 showSection(7);
+            showSection(7);
+        }
+        return;
     }
-    return;
 }
 
 function backSec(secNum) {
