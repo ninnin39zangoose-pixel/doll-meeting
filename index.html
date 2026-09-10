@@ -71,7 +71,7 @@
 
             <div class="btn-group">
                 <div></div>
-                <button type="button" onclick="nextSection(1)" class="btn">次へ進む</button>
+                <button type="button" onclick="nextSec(1)" class="btn">次へ進む</button>
             </div>
         </div>
 
@@ -99,7 +99,7 @@
 
             <div class="btn-group">
                 <button type="button" onclick="backSec(2)" class="btn btn-back">戻る</button>
-                <button type="button" onclick="nextSection(2)" class="btn">次へ進む</button>
+                <button type="button" onclick="nextSec(2)" class="btn">次へ進む</button>
             </div>
         </div>
 
@@ -129,7 +129,7 @@
 
             <div class="btn-group">
                 <button type="button" onclick="backSec(3)" class="btn btn-back">戻る</button>
-                <button type="button" onclick="nextSection(3)" class="btn">次へ進む</button>
+                <button type="button" onclick="nextSec(3)" class="btn">次へ進む</button>
             </div>
         </div>
 
@@ -192,7 +192,7 @@
 
             <div class="btn-group">
                 <button type="button" onclick="backSec(4)" class="btn btn-back">戻る</button>
-                <button type="button" onclick="nextSection(4)" class="btn">次へ進む</button>
+                <button type="button" onclick="nextSec(4)" class="btn">次へ進む</button>
             </div>
         </div>
 
@@ -263,7 +263,7 @@
 
             <div class="btn-group">
                 <button type="button" onclick="backSec(5)" class="btn btn-back">戻る</button>
-                <button type="button" onclick="nextSection(5)" class="btn">次へ進む</button>
+                <button type="button" onclick="nextSec(5)" class="btn">次へ進む</button>
             </div>
         </div>
 
@@ -283,7 +283,7 @@
 
             <div class="btn-group">
                 <button type="button" onclick="backSec(6)" class="btn btn-back">戻る</button>
-                <button type="button" onclick="nextSection(6)" class="btn">次へ進む</button>
+                <button type="button" onclick="nextSec(6)" class="btn">次へ進む</button>
             </div>
         </div>
 
@@ -404,91 +404,199 @@
 
         document.getElementById('sum_details').innerText = details.join(' / ');
     }
-function isChecked(name) {
-    var selector = 'input[name="' + name + '"]:checked, input[name="' + name + '[]"]:checked';
-    return document.querySelectorAll(selector).length > 0;
-}
-    
-function nextSection(secNum) {
-    if (secNum === 1) {
-        var nameInput = document.getElementById('userName') || document.querySelector('#sec_1 input[type="text"]');
-        var nameVal = nameInput ? nameInput.value.trim() : '';
 
-        if (!nameVal) {
-            triggerResetWithError("お名前が入力されていません。");
+    function nextSec(secNum) {
+        if (secNum === 1) {
+            if (!document.getElementById('userName').value.trim()) {
+                triggerResetWithError("お名前が入力されていません。");
+                return;
+            }
+            if (!isChecked('doll_type')) {
+                triggerResetWithError("持参するドールの種類が1つも選択されていません。");
+                return;
+            }
+            historyStack.push(1);
+            showSection(2);
             return;
         }
-        //if (!isChecked('doll_type[]') && !isChecked('doll_type')) {
-        //    triggerResetWithError("持参するドールの種類が1つも選択されていません。");
-        //    return;
-        //}
-        historyStack.push(1);
-        showSection(2);
-        return;
-    }
-    if (secNum === 2) {
-        var choice = getRadioText('branch_choice');
-        if (!choice) {
-            triggerResetWithError("ドール種別の分岐選択肢が選ばれていません。");
+
+        if (secNum === 2) {
+            var choice = getRadioText('branch_choice');
+            if (!choice) {
+                triggerResetWithError("ドール種別の分岐選択肢が選ばれていません。");
+                return;
+            }
+            historyStack.push(2);
+            if (isTypeSelected('80cm') || choice === 'sec_other') {
+                showSection(3);
+            } else {
+                showSection(4);
+            }
             return;
         }
-        historyStack.push(2);
-        if (isTypeSelected('80cm') || choice === 'sec_other') {
-            showSection(3);
-        } else {
-            showSection(4);
-        }
-        return;
-    }
-    if (secNum === 3) {
-        var heightVal = document.getElementById('height_80').value;
-        if (!heightVal || isNaN(parseFloat(heightVal)) || parseFloat(heightVal) < 80) {
-            triggerResetWithError("80cm以上のドールの身長が正しく入力されていません（80以上の数値が必要）。");
+
+        if (secNum === 3) {
+            var heightVal = document.getElementById('height_80').value;
+            if (!heightVal || isNaN(parseFloat(heightVal)) || parseFloat(heightVal) < 80) {
+                triggerResetWithError("80cm以上のドールの身長が正しく入力されていません（80以上の数値が必要）。");
+                return;
+            }
+            if (!getRadioText('stand_80')) {
+                triggerResetWithError("80cm以上ドールのスタンド有無を選択してください。");
+                return;
+            }
+            historyStack.push(3);
+            if (isTypeSelected('1/3') || isTypeSelected('1/4') || isTypeSelected('1/6')) {
+                showSection(4);
+            } else if (isTypeSelected('mini')) {
+                showSection(6);
+            } else {
+                prepareSummary();
+                showSection(7);
+            }
             return;
         }
-        if (!getRadioText('stand_80')) {
-            triggerResetWithError("80cm以上ドールのスタンド有無を選択してください。");
+
+        if (secNum === 4) {
+            var c1_3 = getGridCount('grid_1_3');
+            var c1_4 = getGridCount('grid_1_4');
+            var c1_6 = getGridCount('grid_1_6');
+            var cNui = getGridCount('grid_nui');
+            var scaleTotal = c1_3 + c1_4 + c1_6 + cNui;
+            var has80 = get80cmDollCount() > 0;
+
+            if (has80 && scaleTotal > 3) {
+                triggerResetWithError("80cm以上（等身大）を含める場合、スケールドールの合計は最大3体までです。（現在: スケール" + scaleTotal + "体 + 等身大1体 = 計" + (scaleTotal + 1) + "体）");
+                return;
+            }
+            if (!has80 && scaleTotal > 4) {
+                triggerResetWithError("スケールドールの合計は最大4体までです。（現在: " + scaleTotal + "体）");
+                return;
+            }
+
+            if (isTypeSelected('1/3') && c1_3 === 0) {
+                triggerResetWithError("最初の質問で『1/3サイズ』を選択していますが、数量が0体になっています。");
+                return;
+            }
+            if (!isTypeSelected('1/3') && c1_3 > 0) {
+                triggerResetWithError("最初の質問で『1/3サイズ』を選択していませんが、1体以上が指定されています。");
+                return;
+            }
+
+            if (isTypeSelected('1/4') && c1_4 === 0) {
+                triggerResetWithError("最初の質問で『1/4サイズ』を選択していますが、数量が0体になっています。");
+                return;
+            }
+            if (!isTypeSelected('1/4') && c1_4 > 0) {
+                triggerResetWithError("最初の質問で『1/4サイズ』を選択していませんが、1体以上が指定されています。");
+                return;
+            }
+
+            if (isTypeSelected('1/6') && (c1_6 === 0 && cNui === 0)) {
+                triggerResetWithError("最初の質問で『1/6サイズ・ぬいぐるみ』を選択していますが、数量が指定されていません。");
+                return;
+            }
+
+            historyStack.push(4);
+            prepareSection5();
+            showSection(5);
             return;
         }
-        historyStack.push(3);
-        if (isTypeSelected('1/3') || isTypeSelected('1/4') || isTypeSelected('1/6')) {
-            showSection(4);
-        } else if (isTypeSelected('mini')) {
-            showSection(6);
-        } else {
+
+        if (secNum === 5) {
+            if (getGridCount('grid_1_3') > 0 && !getRadioText('stand_1_3')) {
+                triggerResetWithError("1/3サイズのスタンド有無が選択されていません。");
+                return;
+            }
+            if (getGridCount('grid_1_4') > 0 && !getRadioText('stand_1_4')) {
+                triggerResetWithError("1/4サイズのスタンド有無が選択されていません。");
+                return;
+            }
+            if (getGridCount('grid_1_6') > 0 && !getRadioText('stand_1_6')) {
+                triggerResetWithError("1/6サイズのスタンド有無が選択されていません。");
+                return;
+            }
+
+            historyStack.push(5);
+            if (isTypeSelected('mini')) {
+                showSection(6);
+            } else {
+                prepareSummary();
+                showSection(7);
+            }
+            return;
+        }
+
+        if (secNum === 6) {
+            if (!getRadioText('count_mini')) {
+                triggerResetWithError("ミニサイズドールの持込数が選択されていません。");
+                return;
+            }
+            historyStack.push(6);
             prepareSummary();
             showSection(7);
+            return;
         }
-        return;
     }
-}
 
-function backSec(secNum) {
-    if (historyStack.length > 0) {
-        var prevSec = historyStack.pop();
-        showSection(prevSec);
-    } else {
-        showSection(1);
+    function backSec(secNum) {
+        if (historyStack.length > 0) {
+            var prevSec = historyStack.pop();
+            showSection(prevSec);
+        } else {
+            showSection(1);
+        }
     }
-}
 
 function submitForm() {
     var submitBtn = document.querySelector('button[onclick="submitForm()"]');
     if (submitBtn) submitBtn.disabled = true;
 
-    var userName = document.getElementById('sum_username') ? document.getElementById('sum_username').innerText : '';
-    var datetime = document.getElementById('sum_datetime') ? document.getElementById('sum_datetime').innerText : '';
-    var details = document.getElementById('sum_details') ? document.getElementById('sum_details').innerText : '';
+    var userName = document.getElementById('userName') ? document.getElementById('userName').value : '';
+    var datetime = document.getElementById('currentDateTime') ? document.getElementById('currentDateTime').innerText : '';
+    var details = document.getElementById('summaryDetails') ? document.getElementById('summaryDetails').innerText : '';
 
-    var formData = new URLSearchParams();
-    formData.append('userName', userName);
-    formData.append('datetime', datetime);
-    formData.append('details', details);
+    var payload = {
+        userName: userName,
+        datetime: datetime,
+        details: details
+    };
 
     fetch('https://script.google.com/macros/s/AKfycbz4sIzDc9BfkZU2p5WOTKWZwsbGmTK9dk4E-m54AbqIXkjt_0OqbyH4dJTUrMaLK8J1_g/exec', {
         method: 'POST',
         mode: 'no-cors',
-        body: formData
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(payload)
+    })
+    .then(function() {
+        alert('回答を送信しました！');
+        location.reload();
+    })
+    .catch(function(err) {
+        alert('送信エラーが発生しました: ' + err);
+        if (submitBtn) submitBtn.disabled = false;
+    });
+}
+
+    var userName = document.getElementById('userName') ? document.getElementById('userName').value : '';
+    var datetime = document.getElementById('currentDateTime') ? document.getElementById('currentDateTime').innerText : '';
+    var details = document.getElementById('summaryDetails') ? document.getElementById('summaryDetails').innerText : '';
+
+    var payload = {
+        userName: userName,
+        datetime: datetime,
+        details: details
+    };
+
+    fetch('https://script.google.com/macros/s/AKfycbz4sIzDc9BfkZU2p5WOTKWZwsbGmTK9dk4E-m54AbqIXkjt_0OqbyH4dJTUrMaLK8J1_g/exec', {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(payload)
     })
     .then(function() {
         alert('回答を送信しました！');
