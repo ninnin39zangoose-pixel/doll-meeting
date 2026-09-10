@@ -407,7 +407,10 @@
 
 function nextSection(secNum) {
     if (secNum === 1) {
-        if (!document.getElementById('userName').value.trim()) {
+        var nameInput = document.getElementById('userName') || document.querySelector('#sec_1 input[type="text"]');
+        var nameVal = nameInput ? nameInput.value.trim() : '';
+        
+        if (!nameVal) {
             triggerResetWithError("お名前が入力されていません。");
             return;
         }
@@ -419,7 +422,7 @@ function nextSection(secNum) {
         showSection(2);
         return;
     }
-    if (secNum === 2) {
+    　　if (secNum === 2) {
         var choice = getRadioText('branch_choice');
         if (!choice) {
             triggerResetWithError("ドール種別の分岐選択肢が選ばれていません。");
