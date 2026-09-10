@@ -312,241 +312,52 @@
 </div>
 
 <script>
-    var historyStack = [];
+var historyStack = [];
 
-    function showSection(secNum) {
-        var steps = document.getElementsByClassName('step');
-        for (var i = 0; i < steps.length; i++) {
-            steps[i].className = 'step';
-        }
-        document.getElementById('sec_' + secNum).className = 'step active';
+function showSection(secNum) {
+    var steps = document.getElementsByClassName('step');
+    for (var i = 0; i < steps.length; i++) {
+        steps[i].className = 'step';
+    }
+    var target = document.getElementById('sec_' + secNum);
+    if (target) {
+        target.className = 'step active';
         window.scrollTo(0, 0);
     }
+}
 
-    function triggerResetWithError(msg) {
-        alert("【入力エラー】\n" + msg + "\n\n入力内容をクリアしました。最初からやり直してください。");
-        document.getElementById('mainForm').reset();
-        historyStack = [];
-        showSection(1);
-    }
-
-    function getRadioText(name) {
-        var radios = document.getElementsByName(name);
-        for (var i = 0; i < radios.length; i++) {
-            if (radios[i].checked) return radios[i].value;
+function nextSection(currentSec) {
+    if (currentSec === 1) {
+        var usernameInput = document.querySelector('input[type="text"]');
+        var username = usernameInput ? usernameInput.value.trim() : '';
+        if (!username) {
+            alert('お名前を入力してください。');
+            return;
         }
-        return "";
-    }
-
-    function isChecked(name) {
-        var checkboxes = document.getElementsByName(name);
-        for (var i = 0; i < checkboxes.length; i++) {
-            if (checkboxes[i].checked) return true;
-        }
-        return false;
-    }
-
-    function isTypeSelected(val) {
+        var isChecked = false;
         var checkboxes = document.getElementsByName('doll_type');
         for (var i = 0; i < checkboxes.length; i++) {
-            if (checkboxes[i].checked && checkboxes[i].value === val) return true;
+            if (checkboxes[i].checked) { isChecked = true; break; }
         }
-        return false;
-    }
-
-    function getGridCount(name) {
-        var radios = document.getElementsByName(name);
-        for (var i = 0; i < radios.length; i++) {
-            if (radios[i].checked) return parseInt(radios[i].value, 10);
-        }
-        return 0;
-    }
-
-    function get80cmDollCount() {
-        var val = document.getElementById('height_80').value;
-        var h = parseFloat(val);
-        return (!isNaN(h) && h > 0) ? 1 : 0;
-    }
-
-    function prepareSection5() {
-        var count1_3 = getGridCount('grid_1_3');
-        var count1_4 = getGridCount('grid_1_4');
-        var count1_6 = getGridCount('grid_1_6');
-        var countNui = getGridCount('grid_nui');
-
-        document.getElementById('block_1_3').style.display = (count1_3 > 0) ? 'block' : 'none';
-        document.getElementById('block_1_4').style.display = (count1_4 > 0) ? 'block' : 'none';
-        document.getElementById('block_1_6').style.display = (count1_6 > 0) ? 'block' : 'none';
-        document.getElementById('block_nui').style.display = (countNui > 0) ? 'block' : 'none';
-    }
-
-    function prepareSummary() {
-        var now = new Date();
-        var dateStr = now.getFullYear() + '年' + 
-                      (now.getMonth() + 1) + '月' + 
-                      now.getDate() + '日 ' + 
-                      now.getHours().toString().padStart(2, '0') + ':' + 
-                      now.getMinutes().toString().padStart(2, '0') + ':' + 
-                      now.getSeconds().toString().padStart(2, '0');
-        
-        document.getElementById('sum_datetime').innerText = dateStr;
-        document.getElementById('sum_username').innerText = document.getElementById('userName').value.trim();
-
-        var details = [];
-        if (get80cmDollCount() > 0) {
-            details.push('等身大(80cm以上): 1体 (身長: ' + document.getElementById('height_80').value + 'cm)');
-        }
-        if (getGridCount('grid_1_3') > 0) details.push('1/3サイズ: ' + getGridCount('grid_1_3') + '体');
-        if (getGridCount('grid_1_4') > 0) details.push('1/4サイズ: ' + getGridCount('grid_1_4') + '体');
-        if (getGridCount('grid_1_6') > 0) details.push('1/6サイズ: ' + getGridCount('grid_1_6') + '体');
-        if (getGridCount('grid_nui') > 0) details.push('ぬいぐるみ大: ' + getGridCount('grid_nui') + '体');
-        if (getRadioText('count_mini')) details.push('ミニサイズ: ' + getRadioText('count_mini'));
-
-        document.getElementById('sum_details').innerText = details.join(' / ');
-    }
-
-    function nextSection(secNum) {
-        if (secNum === 1) {
-            if (!document.getElementById('userName').value.trim()) {
-                triggerResetWithError("お名前が入力されていません。");
-                return;
-            }
-            if (!isChecked('doll_type')) {
-                triggerResetWithError("持参するドールの種類が1つも選択されていません。");
-                return;
-            }
-            historyStack.push(1);
-            showSection(2);
-            return;
-        }
-
-        if (secNum === 2) {
-            var choice = getRadioText('branch_choice');
-            if (!choice) {
-                triggerResetWithError("ドール種別の分岐選択肢が選ばれていません。");
-                return;
-            }
-            historyStack.push(2);
-            if (isTypeSelected('80cm') || choice === 'sec_other') {
-                showSection(3);
-            } else {
-                showSection(4);
-            }
-            return;
-        }
-
-        if (secNum === 3) {
-            var heightVal = document.getElementById('height_80').value;
-            if (!heightVal || isNaN(parseFloat(heightVal)) || parseFloat(heightVal) < 80) {
-                triggerResetWithError("80cm以上のドールの身長が正しく入力されていません（80以上の数値が必要）。");
-                return;
-            }
-            if (!getRadioText('stand_80')) {
-                triggerResetWithError("80cm以上ドールのスタンド有無を選択してください。");
-                return;
-            }
-            historyStack.push(3);
-            if (isTypeSelected('1/3') || isTypeSelected('1/4') || isTypeSelected('1/6')) {
-                showSection(4);
-            } else if (isTypeSelected('mini')) {
-                showSection(6);
-            } else {
-                prepareSummary();
-                showSection(7);
-            }
-            return;
-        }
-
-        if (secNum === 4) {
-            var c1_3 = getGridCount('grid_1_3');
-            var c1_4 = getGridCount('grid_1_4');
-            var c1_6 = getGridCount('grid_1_6');
-            var cNui = getGridCount('grid_nui');
-            var scaleTotal = c1_3 + c1_4 + c1_6 + cNui;
-            var has80 = get80cmDollCount() > 0;
-
-            if (has80 && scaleTotal > 3) {
-                triggerResetWithError("80cm以上（等身大）を含める場合、スケールドールの合計は最大3体までです。（現在: スケール" + scaleTotal + "体 + 等身大1体 = 計" + (scaleTotal + 1) + "体）");
-                return;
-            }
-            if (!has80 && scaleTotal > 4) {
-                triggerResetWithError("スケールドールの合計は最大4体までです。（現在: " + scaleTotal + "体）");
-                return;
-            }
-
-            if (isTypeSelected('1/3') && c1_3 === 0) {
-                triggerResetWithError("最初の質問で『1/3サイズ』を選択していますが、数量が0体になっています。");
-                return;
-            }
-            if (!isTypeSelected('1/3') && c1_3 > 0) {
-                triggerResetWithError("最初の質問で『1/3サイズ』を選択していませんが、1体以上が指定されています。");
-                return;
-            }
-
-            if (isTypeSelected('1/4') && c1_4 === 0) {
-                triggerResetWithError("最初の質問で『1/4サイズ』を選択していますが、数量が0体になっています。");
-                return;
-            }
-            if (!isTypeSelected('1/4') && c1_4 > 0) {
-                triggerResetWithError("最初の質問で『1/4サイズ』を選択していませんが、1体以上が指定されています。");
-                return;
-            }
-
-            if (isTypeSelected('1/6') && (c1_6 === 0 && cNui === 0)) {
-                triggerResetWithError("最初の質問で『1/6サイズ・ぬいぐるみ』を選択していますが、数量が指定されていません。");
-                return;
-            }
-
-            historyStack.push(4);
-            prepareSection5();
-            showSection(5);
-            return;
-        }
-
-        if (secNum === 5) {
-            if (getGridCount('grid_1_3') > 0 && !getRadioText('stand_1_3')) {
-                triggerResetWithError("1/3サイズのスタンド有無が選択されていません。");
-                return;
-            }
-            if (getGridCount('grid_1_4') > 0 && !getRadioText('stand_1_4')) {
-                triggerResetWithError("1/4サイズのスタンド有無が選択されていません。");
-                return;
-            }
-            if (getGridCount('grid_1_6') > 0 && !getRadioText('stand_1_6')) {
-                triggerResetWithError("1/6サイズのスタンド有無が選択されていません。");
-                return;
-            }
-
-            historyStack.push(5);
-            if (isTypeSelected('mini')) {
-                showSection(6);
-            } else {
-                prepareSummary();
-                showSection(7);
-            }
-            return;
-        }
-
-        if (secNum === 6) {
-            if (!getRadioText('count_mini')) {
-                triggerResetWithError("ミニサイズドールの持込数が選択されていません。");
-                return;
-            }
-            historyStack.push(6);
-            prepareSummary();
-            showSection(7);
+        if (!isChecked) {
+            alert('持参するドールの種類を1つ以上選択してください。');
             return;
         }
     }
 
-    function backSec(secNum) {
-        if (historyStack.length > 0) {
-            var prevSec = historyStack.pop();
-            showSection(prevSec);
-        } else {
-            showSection(1);
-        }
+    historyStack.push(currentSec);
+    showSection(currentSec + 1);
+}
+
+function backSec(currentSec) {
+    if (historyStack.length > 0) {
+        var prev = historyStack.pop();
+        showSection(prev);
+    } else {
+        showSection(1);
     }
+}
+
 function submitForm() {
     var submitBtn = document.querySelector('button[onclick="submitForm()"]');
     if (submitBtn) submitBtn.disabled = true;
@@ -555,17 +366,16 @@ function submitForm() {
     var datetime = document.getElementById('sum_datetime') ? document.getElementById('sum_datetime').innerText : '';
     var details = document.getElementById('sum_details') ? document.getElementById('sum_details').innerText : '';
 
-    // 送信データをフォーム形式に変換
     var formData = new URLSearchParams();
     formData.append('userName', userName);
     formData.append('datetime', datetime);
     formData.append('details', details);
 
-fetch('https://script.google.com/macros/s/AKfycbz4sIzDc9BfkZU2p5WOTKWZwsbGmTK9dk4E-m54AbqIXkjt_0OqbyH4dJTUrMaLK8J1_g/exec', {
-    method: 'POST',
-    mode: 'no-cors',
-    body: formData
-})
+    fetch('https://script.google.com/macros/s/AKfycbz4sIzDc9BfkZU2p5WOTKWZwsbGmTK9dk4E-m54AbqIXkjt_0OqbyH4dJTUrMaLK8J1_g/exec', {
+        method: 'POST',
+        mode: 'no-cors',
+        body: formData
+    })
     .then(function() {
         alert('回答を送信しました！');
         location.reload();
@@ -575,3 +385,5 @@ fetch('https://script.google.com/macros/s/AKfycbz4sIzDc9BfkZU2p5WOTKWZwsbGmTK9dk
         if (submitBtn) submitBtn.disabled = false;
     });
 }
+</script>
+    
