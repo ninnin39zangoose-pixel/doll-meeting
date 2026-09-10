@@ -453,19 +453,20 @@
             showSection(6);
         } else {
             prepareSummary();
-            showSection(7);
-        }
-        return;
+　　　　　　 showSection(7);
     }
+    return;
+}
 
-    function backSec(secNum) {
-        if (historyStack.length > 0) {
-            var prevSec = historyStack.pop();
-            showSection(prevSec);
-        } else {
-            showSection(1);
-        }
+function backSec(secNum) {
+    if (historyStack.length > 0) {
+        var prevSec = historyStack.pop();
+        showSection(prevSec);
+    } else {
+        showSection(1);
     }
+}
+
 function submitForm() {
     var submitBtn = document.querySelector('button[onclick="submitForm()"]');
     if (submitBtn) submitBtn.disabled = true;
