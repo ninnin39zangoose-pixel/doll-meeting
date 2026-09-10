@@ -411,7 +411,7 @@ function nextSection(secNum) {
         var nameVal = nameInput ? nameInput.value.trim() : '';
         
         if (!nameVal) {
-            triggerResetWithError("お名前が入力されていません。");
+　　　　if (!isChecked('doll_type[]') && !isChecked('doll_type')) {
             return;
         }
         if (!isChecked('doll_type')) {
