@@ -408,6 +408,7 @@ function isChecked(name) {
     var selector = 'input[name="' + name + '"]:checked, input[name="' + name + '[]"]:checked';
     return document.querySelectorAll(selector).length > 0;
 }
+    
 function nextSection(secNum) {
     if (secNum === 1) {
         var nameInput = document.getElementById('userName') || document.querySelector('#sec_1 input[type="text"]');
@@ -417,10 +418,10 @@ function nextSection(secNum) {
             triggerResetWithError("お名前が入力されていません。");
             return;
         }
-        if (!isChecked('doll_type[]') && !isChecked('doll_type')) {
-            triggerResetWithError("持参するドールの種類が1つも選択されていません。");
-            return;
-        }
+        //if (!isChecked('doll_type[]') && !isChecked('doll_type')) {
+        //    triggerResetWithError("持参するドールの種類が1つも選択されていません。");
+        //    return;
+        //}
         historyStack.push(1);
         showSection(2);
         return;
