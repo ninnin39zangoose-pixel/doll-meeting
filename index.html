@@ -552,9 +552,9 @@ function submitForm() {
     var submitBtn = document.querySelector('button[onclick="submitForm()"]');
     if (submitBtn) submitBtn.disabled = true;
 
-    var userName = document.getElementById('userName') ? document.getElementById('userName').value : '';
-    var datetime = document.getElementById('currentDateTime') ? document.getElementById('currentDateTime').innerText : '';
-    var details = document.getElementById('summaryDetails') ? document.getElementById('summaryDetails').innerText : '';
+    var userName = document.getElementById('sum_username') ? document.getElementById('sum_username').innerText : '';
+var datetime = document.getElementById('sum_datetime') ? document.getElementById('sum_datetime').innerText : '';
+var details = document.getElementById('sum_details') ? document.getElementById('sum_details').innerText : '';
 
     var payload = {
         userName: userName,
